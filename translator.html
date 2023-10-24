@@ -1,0 +1,72 @@
+<html>
+    <head>
+        <title>AI Translator</title>
+    </head>
+    <body>
+        <form id="translator-form">
+            <label for="sourcre-lang">Source:</label> 
+                <select name="source-langs" id="source-langs"> 
+                    <option value="English">English</option> 
+                    <option value="Russian">Russian</option> 
+                    <option value="Turkish">Turkish</option> 
+                    <option value="French">French</option> 
+                </select>
+              
+                <label for="destination-lang">Destination:</label> 
+                <select name="destination-langs" id="destination-langs"> 
+                    <option value="English">English</option> 
+                    <option value="Russian">Russian</option> 
+                    <option value="Turkish">Turkish</option> 
+                    <option value="French">French</option> 
+                </select>
+                <br />
+                <label for="input-text">Text:</label> 
+             <div>
+                <textarea name="input-text"
+                 id="input-text"
+                  cols="30" rows="10"></textarea>
+            </div> 
+            </form>
+          
+            <button id="translate_btn">Translate</button>
+            <div id="output-text"></div>
+    </body>
+    <script>
+        const translateBtn = document.getElementById("translate_btn");
+        translateBtn.addEventListener("click", translate);
+        
+        let translatedText = "Waiting...";
+        function translate() {
+            const sourceLang = document.querySelector("#source-langs").value;
+            const destLang = document.querySelector("#destination-langs").value;
+            const inputText = document.querySelector("#input-text").value;
+            fetch('http://127.0.0.1:5000/?slang=' + sourceLang + '&dlang=' + destLang + '&text=' + inputText + '', {
+                method: 'GET',
+                // headers: {
+                //     'Authorization': 'Bearer 1234567890'
+                // }
+                })
+                .then(response => response.json())
+                .then(data => {
+                // do something with the data
+                console.log(data["result"]);
+                translatedText = data["result"];
+                updateOutputText(sourceLang, destLang, translatedText);
+
+                })
+                .catch(error => {
+                // handle the error
+                console.error(error);
+                alert("Error:" + error);
+                });
+
+            updateOutputText(sourceLang, destLang, translatedText);
+            
+        }
+        function updateOutputText(sourceLang, destLang, translatedText) {
+            
+            const outputText = document.querySelector("#output-text");
+            outputText.textContent = translatedText;
+        }
+    </script>
+</html>
