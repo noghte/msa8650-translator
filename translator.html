@@ -41,7 +41,9 @@
             const destLang = document.querySelector("#destination-langs").value;
             const inputText = document.querySelector("#input-text").value;
             fetch('https://msa8650-translator.uk.r.appspot.com/translate?slang=' + sourceLang + '&dlang=' + destLang + '&text=' + inputText + '', {
+            // fetch('http://127.0.0.1:5000/translate?slang=' + sourceLang + '&dlang=' + destLang + '&text=' + inputText + '', {
                 method: 'GET',
+                mode: 'cors',
                 // headers: {
                 //     'Authorization': 'Bearer 1234567890'
                 // }

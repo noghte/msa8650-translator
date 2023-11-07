@@ -1,19 +1,24 @@
 from flask import Flask, request
+from flask_cors import CORS, cross_origin
 import json
 import requests
 from dotenv import load_dotenv
 import os
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 load_dotenv()  # take environment variables from .env.
 OPENAI_KEY = os.environ.get("OPENAI_KEY")
 
 @app.route("/")
+@cross_origin()
 def hello():
     return "Working!"
 
 @app.route("/translate", methods=["POST"])
+@cross_origin()
 def translate():
     source_lang = request.args.get('slang')
     destination_lang = request.args.get('dlang')
@@ -38,4 +43,4 @@ def translate():
     return  {"result": translation}
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
