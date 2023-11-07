@@ -40,7 +40,7 @@
             const sourceLang = document.querySelector("#source-langs").value;
             const destLang = document.querySelector("#destination-langs").value;
             const inputText = document.querySelector("#input-text").value;
-            fetch('http://127.0.0.1:5000/?slang=' + sourceLang + '&dlang=' + destLang + '&text=' + inputText + '', {
+            fetch('https://msa8650-translator.uk.r.appspot.com/translate?slang=' + sourceLang + '&dlang=' + destLang + '&text=' + inputText + '', {
                 method: 'GET',
                 // headers: {
                 //     'Authorization': 'Bearer 1234567890'

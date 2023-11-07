@@ -1,40 +1,41 @@
-import flask
-from flask_cors import CORS, cross_origin
+from flask import Flask, request
 import json
-import openai
+import requests
 from dotenv import load_dotenv
 import os
 
-app = flask.Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+app = Flask(__name__)
 
 load_dotenv()  # take environment variables from .env.
-openai.api_key = os.environ.get("OPENAI_KEY")
-def run_model(source_lang, destination_lang, original_text):
-    prompt_text = f"What is the translation of `{original_text}` from {source_lang} to {destination_lang}?"
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-                {"role": "system", "content": "You are a helpful translator."},
-                {"role": "user", "content": prompt_text},
-            ],
-        temperature=0.1,
-        max_tokens=256
-    )
-    translation  = response["choices"][0]["message"]["content"]
-    return  {"result": translation}
-
+OPENAI_KEY = os.environ.get("OPENAI_KEY")
 
 @app.route("/")
-@cross_origin()
-def get_results():
-    source_lang = flask.request.args.get('slang')
-    destination_lang = flask.request.args.get('dlang')
-    original_text = flask.request.args.get('text')
+def hello():
+    return "Working!"
 
-    result = run_model(source_lang, destination_lang, original_text)
-    return result
+@app.route("/translate", methods=["POST"])
+def translate():
+    source_lang = request.args.get('slang')
+    destination_lang = request.args.get('dlang')
+    original_text = request.args.get('text')
+
+    prompt = f"What is the slang version translation of `{original_text}` from {source_lang} to {destination_lang}?"
+
+    url = "https://api.openai.com/v1/chat/completions"
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {OPENAI_KEY}"
+    }
+    data = {
+        "model": "gpt-3.5-turbo-1106", # gpt-3.5-turbo
+        "messages": [{"role":"user","content":prompt}],
+        "temperature": 0.7
+    }
+
+    response = requests.post(url, headers=headers,data=json.dumps(data))
+    translation  = response.json()["choices"][0]["message"]["content"]
+    return  {"result": translation}
 
 if __name__ == "__main__":
     app.run(debug=True)
